@@ -11,7 +11,7 @@ package { "language-pack-de":
 }
 package { "postgresql":
   ensure => "installed",
-  require => Exec["apt update"],
+  require => Package["language-pack-de"],
 }
 exec { "openerp":
   command => "/usr/bin/apt-get -y --force-yes install openerp",

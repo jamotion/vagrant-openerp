@@ -1,0 +1,3 @@
+[submodule "restful-openerp"]
+	path = restful-openerp
+	url = https://github.com/chris--/restful-openerp

@@ -1,0 +1,3 @@
+#!/bin/bash
+cd ~/project
+/home/vagrant/bin/base_quality_interrogation.py -c /home/vagrant/project/bqirc-61 --server-series=v610 -- inter

@@ -22,7 +22,6 @@ class dev {
         python: before => Class[openerp];
         openerp: ;
         custom: ;
-        restful-openerp: ;
     }
 }
 

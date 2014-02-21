@@ -16,16 +16,44 @@ class openerp {
         command => "dpkg -i openerp_$OPENERP_VERSION-latest-1_all.deb",
         require => Exec["wget-openerp"]
     }
+    exec { "chsh-openerp-user":
+        command => "sudo chsh --shell /bin/bash openerp",
+        require => Exec["apt-install-openerp"]
+    }
+    exec { "passwd-openerp-user":
+        command => "sudo echo openerp:openerp | chpasswd",
+        require => Exec["chsh-openerp-user"]
+    }
+    exec { "mkdir-openerp-user":
+        command => "sudo mkdir /home/openerp",
+        require => Exec["passwd-openerp-user"]
+    }
+    exec { "chown-openerp-user":
+        command => "sudo chown openerp.openerp /home/openerp",
+        require => Exec["mkdir-openerp-user"]
+    }
+    exec { "sudoer-openerp-user":
+        command => "sudo usermod -a -G sudo openerp",
+        require => Exec["chown-openerp-user"]
+    }
+    exec { "move-openerp-addon-files":
+        command => "sudo mv /usr/share/pyshared/openerp/addons/* /vagrant/addons/",
+        require => Exec["sudoer-openerp-user"]
+    }
     file { "/etc/openerp/openerp-server.conf":
         source => "/vagrant/puppet/files/etc/openerp/openerp-server.conf",
         owner => "root", 
         group => "root", 
         mode => 0644,
         ensure => file,
-        require => Exec["apt-install-openerp"]
+        require => Exec["move-openerp-addon-files"]
     }
-    exec { "restart-openerp":
-        command => "service openerp restart",
+    exec { "stop-openerp":
+        command => "service openerp stop",
         require => File["/etc/openerp/openerp-server.conf"]
+    }
+    exec { "disable-openerp-service":
+        command => "sudo update-rc.d -f openerp disable",
+        require => Exec["stop-openerp"]
     }
 }

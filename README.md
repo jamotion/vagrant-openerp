@@ -36,9 +36,10 @@ Adding Run/Debug Configuration
 
 What's next?
 ------------
-Now your are ready for developing your own OpenERP Apps with PyCharm on Vagrant Boxes!!!
+Now your are ready for developing your own OpenERP Apps with PyCharm on the vagrant box.
+All locally available OpenERP modules are located in the ./addons folder. This is also the place for your own addons.
+You will reach the OpenERP under http://localhost:8069/ but you have to run it first :-P
 
 Enjoy it!!!
 
 
-All used OpenERP modules are located in the ./addons folder.

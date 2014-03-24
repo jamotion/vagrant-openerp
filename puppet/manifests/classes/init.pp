@@ -8,12 +8,12 @@ class init {
 
     case $operatingsystem {
         ubuntu: {
-			exec { "dpkg_config":
-                command => "sudo dpkg --configure -a",
-            }
+			#exec { "dpkg_config":
+            #    command => "sudo dpkg --configure -a",
+            #}
             exec { "update_apt":
-                command => "sudo apt-get update",
-				require => Exec["dpkg_config"]
+                command => "sudo apt-get update"
+			#	require => Exec["dpkg_config"]
             }
             # Provides "add-apt-repository" command, useful if you need
             # to install software from other apt repositories.

@@ -11,7 +11,7 @@ exec { "pip-install-QUnitSuite":
 exec { "wget-openerp":
   command => "wget http://nightly.openerp.com/$OPENERP_VERSION/nightly/deb/openerp_$OPENERP_VERSION-latest-1_all.deb",
   creates => "/home/vagrant/openerp_$OPENERP_VERSION-latest-1_all.deb",
-  require => [ Exec["pip-install-QUnitSuite"] ]
+  require => Exec["pip-install-QUnitSuite"]
 }
 exec { "apt-install-openerp":
   command => "dpkg -i openerp_$OPENERP_VERSION-latest-1_all.deb",
@@ -22,16 +22,19 @@ user { "openerp":
   managehome => true,
   shell => "/bin/bash",
   groups => "sudo",
-  password => "$6$DWxp1OC6$oDdl8o.Gcwr.WXTtEEgcTkraeKBckJf4Uxuaxk6aMMVGJMnLe/omkZWbOtNW1BFgbpkT70KQ0jm58SyzJQZt60",
   require => Exec["apt-install-openerp"]
+}
+exec { "passwd-openerp-user":
+  command => "sudo echo openerp:openerp | chpasswd",
+  require => User["openerp"]
 }
 exec { "copy-openerp-addon-files":
   command => "sudo cp -Ru /usr/share/pyshared/openerp/addons/* /vagrant/addons/",
   timeout => 0,
-  require => User["openerp"],
+  require => Exec["passwd-openerp-user"]
 }
-exec { "rename-addons-folder":
-  command => "sudo mv /usr/share/pyshared/openerp/addons /usr/share/pyshared/openerp/addons_orig",
+exec { "del-addons-folder":
+  command => "sudo rm -R /usr/share/pyshared/openerp/addons",
   require => Exec["copy-openerp-addon-files"]
 }
 file { "/etc/openerp/openerp-server.conf":
@@ -40,7 +43,7 @@ file { "/etc/openerp/openerp-server.conf":
   group => "root",
   mode => 0644,
   ensure => file,
-  require => Exec["rename-addons-folder"]
+  require => Exec["del-addons-folder"]
 }
 exec { "stop-openerp":
   command => "service openerp stop",
